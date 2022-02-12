@@ -12,14 +12,15 @@ def get_dataset(tfrecord_path, label_map='label_map.pbtxt'):
     """
     Opens a tf record file and create tf dataset
     args:
-      - tfrecord_path [str]: path to a tf record file
+      - tfrecord_path [str or list[str]]: path(s) to a tf record file
       - label_map [str]: path the label_map file
     returns:
       - dataset [tf.Dataset]: tensorflow dataset
     """
     input_config = input_reader_pb2.InputReader()
     input_config.label_map_path = label_map
-    input_config.tf_record_input_reader.input_path[:] = [tfrecord_path]
+    paths = [tfrecord_path] if not isinstance(tfrecord_path, list) else tfrecord_path
+    input_config.tf_record_input_reader.input_path[:] = paths
     
     dataset = build_dataset(input_config)
     return dataset
