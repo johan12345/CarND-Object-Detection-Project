@@ -22,12 +22,14 @@ findings:
   - Images seem to be taken by a forward-facing camera
 - Labels are also included when the objects are very small (far away) or partially occluded
 - Vehicles are by far the most common class, cyclists are pretty rare
-- The dataset includes some negative examples (images with no labels at all) 
+- The dataset includes some negative examples (i.e., images with no labels at all) 
 
 ![Examples of images in the dataset](resources/examples.png)
 
 #### Cross validation
-This section should detail the cross validation strategy and justify your approach.
+The dataset is split into training, validation and test sets with a 60/20/20 split.
+As mentioned above, each file contains a continuous recording. Therefore, splitting is done inbetween files to make sure
+that the model generalizes to unseen recordings with different road conditions.
 
 ### Training
 #### Reference experiment
