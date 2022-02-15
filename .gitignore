@@ -2,3 +2,9 @@
 *.ipynb_checkpoints/
 /data
 /env
+/experiments/pretrained_model
+/experiments/**/*.tfevents.*
+/experiments/**/*.data-*
+/experiments/**/*.index
+/experiments/**/checkpoint
+.idea/
