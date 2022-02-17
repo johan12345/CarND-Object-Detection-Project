@@ -71,6 +71,9 @@ especially for single-step object detection models.
 Below I inserted plots of losses and learning rates in all the experiments, taken from TensorBoard.
 The sections below explain what has been changed in each experiment.
 
+As the provided code for evaluation is a separate script that runs only once, the validation losses are only shown
+for the final state of the training as opposed to a continuous curve for each iteration.
+
 <img alt="loss plots" src="resources/loss_plots.png" width="100%"/>\
 *Figure 3: Loss curves of all training runs. orange: reference, pink: Experiment 1, brown: Experiment 2,
 light blue: Experiment 3, dark blue: Experiment 4.*
@@ -109,13 +112,14 @@ All the augmentations were added with their respective default settings.
  ```
 
 The training results improved slightly, but the training loss was still significantly above 1. The jumps in the
-training loss curve are a sign of too high learning rates and/or too small batch sizes.
+training loss curve are a sign of too high learning rates and/or too little regularization, such as too small batch
+sizes.
 
 ##### 2. increase batch size to 4
 
 In this run, I increased the batch size from 2 to 4, which is the maximum that fits into my 8 GB GPU memory.
 The training loss curves initially showed significantly better values, but later started to jump again, so I cancelled
-the training run.
+the training run before completion.
 
 ##### 3. decrease learning rate to 0.02
 
