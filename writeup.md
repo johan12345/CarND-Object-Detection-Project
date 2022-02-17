@@ -80,12 +80,15 @@ light blue: Experiment 3, dark blue: Experiment 4.*
 light blue: Experiment 3, dark blue: Experiment 4.*
 
 ##### 1. add data augmentations
-First, I added some data augmentation strategies to the configuration that are reasonable for the dataset:
+First, I added some data augmentation strategies to the configuration that are reasonable for the dataset.
+The first five additional augmentations simulate changes in the lighting conditions or camera settings:
 - Random RGB to Grayscale conversion
 - Random brightness adjustment
 - Random contrast adjustment
 - Random hue adjustment
 - Random saturation adjustment
+
+And the final augmentation simulates partial occlusion of the image:
 - Randomly replace patches of the image with Gaussian noise
 
 All the augmentations were added with their respective default settings.
