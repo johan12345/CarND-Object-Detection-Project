@@ -1,5 +1,11 @@
 ### Project overview
-This section should contain a brief description of the project and what we are trying to achieve. Why is object detection such an important component of self driving car systems?
+Object detection is an essential part of self-driving car systems, as it is one of the main mechanisms for the car
+to be aware of its environment. This includes detecting traffic signs and lights, other vehicles, pedestrians and
+cyclists as well as unforeseen road conditions such as traffic cones at construction sites.
+
+In this project, I have trained a [Single Shot MultiBox Detector](https://arxiv.org/abs/1512.02325) object detection
+model on a subset of the [Waymo Open Dataset](https://www.waymo.com/open) to detect three common classes of objects
+using a vehicle's front facing camera: vehicles, cyclists and pedestrians.
 
 ### Set up
 This project uses the dependencies as provided in the starter code, i.e. you can use the Dockerfile at
@@ -21,21 +27,27 @@ findings:
   - Data includes different kinds of roads: city streets, highways, narrow driveways, etc.
   - Images seem to be taken by a forward-facing camera
 - Labels are also included when the objects are very small (far away) or partially occluded
-- Vehicles are by far the most common class, cyclists are pretty rare
-- The dataset includes some negative examples (i.e., images with no labels at all) 
+- Vehicles are by far the most common class (76%), cyclists are pretty rare (<1%) - see Figure 2
+- While most frames contain one or more objects, the dataset also includes some negative examples
+  (i.e., images with no labels at all) 
 
-![Examples of images in the dataset](resources/examples.png)
+![Examples of images in the dataset](resources/examples.png)\
+*Figure 1: Examples of images in the dataset*
+
+![Class distribution](resources/class_distribution.svg)\
+*Figure 2: Class distribution (calculated from a subset of each file due to the large dataset size)*
 
 #### Cross validation
-The dataset is split into training, validation and test sets with a 60/20/20 split.
+The dataset is split into training, validation and test sets with a 60/20/20 split using the `create_splits.py` scripts.
 As mentioned above, each file contains a continuous recording. Therefore, splitting is done inbetween files to make sure
 that the model generalizes to unseen recordings with different road conditions.
 
 ### Training
 #### Reference experiment
 The reference experiment was run with the configuration provided in the starter project, except that the batch size
-was reduced to 2 as instructed in the README file. The model performanve is very poor with average precision close to
-zero.
+was reduced to 2 as instructed in the README file. The model performance is very poor with average precision close to
+zero. Evaluating the model on one of the recordings from the test dataset also confirmed this, as almost no objects
+were detected.
 
 Still, it is apparent that the model performs better on larger objects than on smaller ones, which is expected,
 especially for single-step object detection models.
@@ -60,7 +72,12 @@ Below I inserted plots of losses and learning rates in all the experiments, take
 The sections below explain what has been changed in each experiment.
 
 <img alt="loss plots" src="resources/loss_plots.png" width="100%"/>\
-<img alt="learning rate plots" src="resources/lr_plots.png" width="25%"/>
+*Figure 3: Loss curves of all training runs. orange: reference, pink: Experiment 1, brown: Experiment 2,
+light blue: Experiment 3, dark blue: Experiment 4.*
+
+<img alt="learning rate plots" src="resources/lr_plots.png" width="25%"/>\
+*Figure 4: Learning rate curves of all training runs. orange: reference, pink: Experiment 1, brown: Experiment 2,
+light blue: Experiment 3, dark blue: Experiment 4.*
 
 ##### 1. add data augmentations
 First, I added some data augmentation strategies to the configuration that are reasonable for the dataset:
@@ -138,5 +155,5 @@ model accuracy, with average precision and recall over 0.7 for large objects.
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.784
 ```
 
-The final animation of the model from experiment 4, evaluated on one of the recordings from the test set, is shown here:
+A video of the model from the final experiment, evaluated on one of the recordings from the test set, is shown here:
 ![animation](resources/animation.gif)
