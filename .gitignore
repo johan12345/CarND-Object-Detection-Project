@@ -7,4 +7,5 @@
 /experiments/**/*.data-*
 /experiments/**/*.index
 /experiments/**/checkpoint
+/experiments/**/exported
 .idea/

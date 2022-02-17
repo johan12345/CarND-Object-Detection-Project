@@ -33,8 +33,14 @@ that the model generalizes to unseen recordings with different road conditions.
 
 ### Training
 #### Reference experiment
-This section should detail the results of the reference experiment. It should includes training metrics and a detailed explanation of the algorithm's performances.
+The reference experiment was run with the configuration provided in the starter project, except that the batch size
+was reduced to 2 as instructed in the README file. The model performanve is very poor with average precision close to
+zero.
 
+Still, it is apparent that the model performs better on larger objects than on smaller ones, which is expected,
+especially for single-step object detection models.
+
+```
  Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.004
  Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.010
  Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.001
@@ -47,12 +53,27 @@ This section should detail the results of the reference experiment. It should in
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.004
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.071
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.368
+ ```
 
 #### Improve on the reference
-This section should highlight the different strategies you adopted to improve your model. It should contain relevant figures and details of your findings.
+Below I inserted plots of losses and learning rates in all the experiments, taken from TensorBoard.
+The sections below explain what has been changed in each experiment.
+
+<img alt="loss plots" src="resources/loss_plots.png" width="100%"/>\
+<img alt="learning rate plots" src="resources/lr_plots.png" width="25%"/>
 
 ##### 1. add data augmentations
+First, I added some data augmentation strategies to the configuration that are reasonable for the dataset:
+- Random RGB to Grayscale conversion
+- Random brightness adjustment
+- Random contrast adjustment
+- Random hue adjustment
+- Random saturation adjustment
+- Randomly replace patches of the image with Gaussian noise
 
+All the augmentations were added with their respective default settings.
+
+```
  Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.005
  Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.011
  Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.004
@@ -65,3 +86,57 @@ This section should highlight the different strategies you adopted to improve yo
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.009
  Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.064
  Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.467
+ ```
+
+The training results improved slightly, but the training loss was still significantly above 1. The jumps in the
+training loss curve are a sign of too high learning rates and/or too small batch sizes.
+
+##### 2. increase batch size to 4
+
+In this run, I increased the batch size from 2 to 4, which is the maximum that fits into my 8 GB GPU memory.
+The training loss curves initially showed significantly better values, but later started to jump again, so I cancelled
+the training run.
+
+##### 3. decrease learning rate to 0.02
+
+In this experiment, the base learning rate was decreased from 0.04 to 0.02. This got rid of the jumps in the loss curve
+and significantly improved the accuracy.
+
+```
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.067
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.149
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.053
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.017
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.173
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.522
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.019
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.073
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.113
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.058
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.242
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.591
+ ```
+
+##### 4. decrease learning rate to 0.01
+
+This experiment further decreases the base learning rate to 0.01, and also decreases the warmup learning rate
+accordingly. I also left the training run for more iterations (50000 instead of 25000). This further increases the
+model accuracy, with average precision and recall over 0.7 for large objects.
+
+```angular2html
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.130
+ Average Precision  (AP) @[ IoU=0.50      | area=   all | maxDets=100 ] = 0.251
+ Average Precision  (AP) @[ IoU=0.75      | area=   all | maxDets=100 ] = 0.111
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.040
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.345
+ Average Precision  (AP) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.737
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=  1 ] = 0.027
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets= 10 ] = 0.132
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=   all | maxDets=100 ] = 0.179
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= small | maxDets=100 ] = 0.082
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area=medium | maxDets=100 ] = 0.423
+ Average Recall     (AR) @[ IoU=0.50:0.95 | area= large | maxDets=100 ] = 0.784
+```
+
+The final animation of the model from experiment 4, evaluated on one of the recordings from the test set, is shown here:
+![animation](resources/animation.gif)
